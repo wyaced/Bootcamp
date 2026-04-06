@@ -33,8 +33,13 @@ class UsersTable
                     ->label('Is Muted'),
                 TextColumn::make('role')
                     ->label('Role')
+                    ->badge()
+                    ->color(fn(User $user) => match ($user->role) {
+                        'admin' => 'danger',
+                        'user' => 'info',
+                        default => 'secondary',
+                    })
                     ->searchable()
-                    ->sortable(),
             ])
             ->filters([
                 //

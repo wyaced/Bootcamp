@@ -19,7 +19,7 @@
                             rows="4"
                             maxlength="255"
                             required
-                            @if (Auth::user()->is_muted)
+                            @if (Auth::check() && Auth::user()->is_muted)
                                 disabled
                             @endif
                         >{{ old('message') }}</textarea>
@@ -34,7 +34,7 @@
                     <div class="mt-4 flex items-center justify-end">
                         <button
                             type="submit"
-                            @if (Auth::user()->is_muted)
+                            @if (Auth::check() && Auth::user()->is_muted)
                                 disabled
                                 class="btn btn-neutral btn-sm cursor-not-allowed"
                             @else
