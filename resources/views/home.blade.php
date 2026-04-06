@@ -19,6 +19,9 @@
                             rows="4"
                             maxlength="255"
                             required
+                            @if (Auth::user()->is_muted)
+                                disabled
+                            @endif
                         >{{ old('message') }}</textarea>
 
                         @error('message')
@@ -29,7 +32,15 @@
                     </div>
 
                     <div class="mt-4 flex items-center justify-end">
-                        <button type="submit" class="btn btn-primary btn-sm">
+                        <button
+                            type="submit"
+                            @if (Auth::user()->is_muted)
+                                disabled
+                                class="btn btn-neutral btn-sm cursor-not-allowed"
+                            @else
+                                class="btn btn-primary btn-sm"
+                            @endif
+                        >
                             Chirp
                         </button>
                     </div>
