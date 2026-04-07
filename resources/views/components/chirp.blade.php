@@ -46,7 +46,11 @@
                 </div>
 
                 <p class="mt-1">
-                    {{ $chirp->message }}
+                    @if ($chirp->is_redacted)
+                        <span class="text-sm text-base-content/60 italic">[Redacted]</span>
+                    @else
+                        {{ $chirp->message }}
+                    @endif
                 </p>
             </div>
         </div>

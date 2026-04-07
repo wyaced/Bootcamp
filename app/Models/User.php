@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_muted',
     ];
 
     /**
@@ -50,6 +51,11 @@ class User extends Authenticatable
     public function chirps(): HasMany
     {
         return $this->hasMany(Chirp::class);
+    }
+
+    public function chirpLogs(): HasMany
+    {
+        return $this->hasMany(ChirpLog::class);
     }
 
     public function hasRole(string $role): bool

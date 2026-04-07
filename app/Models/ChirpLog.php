@@ -4,14 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Chirp extends Model
+class ChirpLog extends Model
 {
     protected $fillable = [
+        'user_id',
+        'chirp_id',
         'message',
-        'is_redacted',
-        'is_deleted',
+        'status',
+        'created_at',
+        'updated_at'
     ];
 
     public function user(): BelongsTo
@@ -19,8 +21,8 @@ class Chirp extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function chirpLogs(): HasMany
+    public function chirp(): BelongsTo
     {
-        return $this->hasMany(ChirpLog::class);
+        return $this->belongsTo(Chirp::class);
     }
 }

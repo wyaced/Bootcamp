@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Chirp;
+use App\Models\ChirpLog;
 use Illuminate\Http\Request;
 
 class ChirpController extends Controller
@@ -13,6 +14,7 @@ class ChirpController extends Controller
     public function index()
     {
         $chirps = Chirp::with('user')
+            ->where('is_deleted', false)  // Exclude deleted chirps
             ->latest()
             ->take(50)  // Limit to 50 most recent chirps
             ->get();
@@ -40,7 +42,16 @@ class ChirpController extends Controller
             'message.max' => 'Chirps must be 255 characters or less.',
         ]);
 
-        auth()->user()->chirps()->create($validated);
+        $chirp = auth()->user()->chirps()->create($validated);
+
+        auth()->user()->chirpLogs()->create([
+            'user_id' => auth()->id(),
+            'chirp_id' => $chirp->id,
+            'message' => $validated['message'],
+            'status' => 'current',
+            'created_at' => $chirp->created_at,
+            'updated_at' => $chirp->updated_at,
+        ]);
 
         return redirect('/')->with('success', 'Your chirp has been posted!');
     }
@@ -82,6 +93,24 @@ class ChirpController extends Controller
         // Update
         $chirp->update($validated);
 
+        // Log update
+        $chirpLogCurrent = ChirpLog::where('chirp_id', $chirp->id)->latest('id')->first();
+        if ($chirpLogCurrent) {
+            $chirpLogCurrent->update([
+                'status' => 'old',
+                'updated_at' => $chirp->updated_at,
+            ]);
+        }
+
+        auth()->user()->chirpLogs()->create([
+            'user_id'=> auth()->id(),
+            'chirp_id' => $chirp->id,
+            'message' => $validated['message'],
+            'status' => 'current',
+            'created_at' => $chirp->updated_at,
+            'updated_at' => $chirp->updated_at,
+        ]);
+
         return redirect('/')->with('success', 'Chirp updated!');
     }
 
@@ -94,7 +123,15 @@ class ChirpController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $chirp->delete();
+        $chirp->update(['is_deleted' => true]);
+
+        $chirpLogCurrent = ChirpLog::where('chirp_id', $chirp->id)->latest('id')->first();
+        if ($chirpLogCurrent) {
+            $chirpLogCurrent->update([
+                'status' => 'deleted',
+                'updated_at' => $chirp->updated_at,
+            ]);
+        }
 
         return redirect('/')->with('success', 'Chirp deleted!');
     }

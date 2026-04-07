@@ -10,10 +10,13 @@ Route::get('/', [ChirpController::class, 'index']);
 
 // Protected routes
 Route::middleware('auth')->group(function () {
+    Route::delete('/chirps/{chirp}', [ChirpController::class, 'destroy'])->middleware('not_deleted');
+});
+
+Route::middleware(['auth', 'not_muted'])->group(function () {
     Route::post('/chirps', [ChirpController::class, 'store']);
-    Route::get('/chirps/{chirp}/edit', [ChirpController::class, 'edit']);
-    Route::put('/chirps/{chirp}', [ChirpController::class, 'update']);
-    Route::delete('/chirps/{chirp}', [ChirpController::class, 'destroy']);
+    Route::get('/chirps/{chirp}/edit', [ChirpController::class, 'edit'])->middleware(['not_redacted', 'not_deleted']);
+    Route::put('/chirps/{chirp}', [ChirpController::class, 'update'])->middleware(['not_redacted', 'not_deleted']);
 });
 
 // Registration routes
