@@ -5,7 +5,7 @@
 
     <div class="hero min-h-[calc(100vh-10rem)] bg-base-200 px-4 py-10">
         <div class="hero-content w-full max-w-md">
-            <div class="card w-full rounded-3xl border border-base-300 bg-base-100 shadow-xl">
+            <div class="card w-full rounded-3xl border border-base-300 bg-base-100 shadow-2xL">
                 <div class="card-body p-8 sm:p-10">
 
                     <!-- Header -->
@@ -26,7 +26,7 @@
                                     name="name"
                                     placeholder="Enter your name"
                                     value="{{ old('name') }}"
-                                    class="input input-bordered w-full @error('name') input-error @enderror"
+                                    class="input input-bordered w-full border-base-content/60 @error('name') input-error @enderror"
                                     required>
                                 <span>Name</span>
                             </label>
